@@ -5,10 +5,23 @@
     <meta charset="UTF-8">
     <title>Document</title>
     <link rel="shortcut icon" href="/public/img/favicon.ico">
-    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css">
+    <script src="/node_modules/jquery/dist/jquery.js"></script>
+    <script src="/node_modules/jquery.cookie/jquery.cookie.js"></script>
     <link rel="stylesheet" href="/public/css/login.css">
+    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css">
+    <script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/node_modules/jquery-base64/jquery.base64.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var rem = $.cookie('remember')
+            if (rem) {
+                $("#remember").prop("checked", true)
+                $("#email").val($.cookie("email"))
+                $("#password").val($.base64.decode($.cookie("password")))
+            }
+        })
+    </script>
 </head>
-
 <body>
 <div class="main">
     <div class="header">
@@ -17,19 +30,19 @@
         </a>
         <h1>用户登录</h1>
     </div>
-    <form id="login_form">
+    <form id="login_form" method="get" action="#">
         <div class="form-group">
             <label for="">邮箱</label>
-            <input type="email" class="form-control" id="" name="email" placeholder="Email" autofocus>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email" autofocus>
         </div>
         <div class="form-group">
             <label for="">密码</label>
             <a class="pull-right" href="">忘记密码？</a>
-            <input type="password" class="form-control" id="" name="password" placeholder="Password">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
         </div>
         <div class="checkbox">
             <label>
-                <input type="checkbox">记住我
+                <input type="checkbox" id="remember" value="1">记住我
             </label>
         </div>
         <button type="submit" class="btn btn-success btn-block">登录</button>
@@ -38,13 +51,12 @@
         <p>没有账号? <a href="/register">点击创建</a>.</p>
     </div>
 </div>
-<script src="/node_modules/jquery/dist/jquery.js"></script>
+<script src="public/js/RemeberPw.js"></script>
 <script>
     $('#login_form').on('submit', function (e) {
         // 进行表单数据序列化
         e.preventDefault()
         var formData = $(this).serialize()
-        console.log(formData)
         $.ajax({
             url: '/login',
             type: 'post',
@@ -62,6 +74,7 @@
                 }
             }
         })
+        save_cookies()
     })
 </script>
 </body>

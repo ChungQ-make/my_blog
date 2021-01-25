@@ -18,7 +18,7 @@
         <div class="col-md-9">
             <article class="markdown-body">
                 <h1 id="_1"><a name="user-content-_1" href="#_1" class="headeranchor-link" aria-hidden="true"><span
-                        class="headeranchor"></span></a>测试</h1>
+                        class="headeranchor"></span></a>标题</h1>
                 <blockquote>
                     <p>杨柳青青江水平</p>
                 </blockquote>
@@ -33,9 +33,27 @@
                         class="headeranchor"></span></a>哈哈哈</h3>
                 <p>然后这里就开始 <code>hello world</code> ，就用可以了。</p>
                 <p>下面是一段代码：</p>
-                <pre><code class="javascript">var foo = 'bar'
-  console.log(foo)
-  </code></pre>
+                <pre>
+                    <code class="javascript">
+//保存到cookie
+function save_cookies() {
+    // console.log('starting!!!!')
+    if ($("#remember").prop("checked")) {
+        var email = $("#email").val()
+        var password = $("#password").val()
+
+        $.cookie("remember", "true", {expires: 7})
+        $.cookie("email", email, {expires: 7})
+        // 这里使用base64 进行加密
+        $.cookie("password", $.base64.encode(password), {expires: 7})
+    } else {
+        $.cookie("remember", "false", {expires: -1})
+        $.cookie("email", "", {expires: -1})
+        $.cookie("password", "", {expires: -1})
+    }
+}
+                    </code>
+                </pre>
                 <h3 id="_4"><a name="user-content-_4" href="#_4" class="headeranchor-link" aria-hidden="true"><span
                         class="headeranchor"></span></a>嘿嘿</h3>
                 <h3 id="_5"><a name="user-content-_5" href="#_5" class="headeranchor-link" aria-hidden="true"><span

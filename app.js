@@ -27,10 +27,20 @@ app.use(session({
 
 app.use(router)
 
+app.use((req, res) => {
+    res.status(404).render('404.html')
+})
 
-/*app.get('/',(req ,res) => {
-    res.send('nmsl')
-})*/
+app.use((err, req, res, next) => {
+    res.status(500).json({
+        err_code: 500,
+        message: err.message
+    })
+/*    res.status(500).render('500.html', {
+        ErrMessage: err.message
+    })*/
+})
+
 app.listen(5000, () => {
     console.log('runing at http://localhost:5000')
 })
