@@ -71,6 +71,8 @@
                     window.alert('邮箱或者密码错误')
                 } else if (err_code === 500) {
                     window.alert('服务器繁忙，请稍后重试！')
+                } else if (err_code === 2) {
+                    window.alert('该账号未注册！')
                 }
             }
         })

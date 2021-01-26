@@ -50,6 +50,7 @@
 <script src="/public/js/RegisterFromRuler.js"></script>
 <script>
     $('#register_form').on('success.form.bv', function (e) {
+        // 由于使用了 bootstrapValidator 这里的事件监听 submit 必须改为 success.form.bv，否则会产生两次请求。 参考文档：https://www.cnblogs.com/alexjjj/p/6566126.html
         e.preventDefault()
         var formData = $(this).serialize()
         $.ajax({

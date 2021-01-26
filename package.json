@@ -1,7 +1,7 @@
 {
   "name": "blog",
   "version": "1.0.0",
-  "description": "just a forum system",
+  "description": "just a form system",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -22,10 +22,13 @@
     "express": "^4.17.1",
     "express-art-template": "^1.0.1",
     "express-session": "^1.17.1",
+    "highlight.js": "^10.5.0",
     "jquery": "^3.5.1",
     "jquery-base64": "^1.0.0",
     "jquery.cookie": "^1.4.1",
+    "marked": "^1.2.7",
     "moment": "^2.29.1",
-    "mongoose": "^5.11.12"
+    "mongoose": "^5.11.12",
+    "titatoggle": "^2.1.2"
   }
 }

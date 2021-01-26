@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
     <title>Internal server error</title>
-    <h1 style="color: #ff0000">Internal server error.</h1>
+    <h1 style="color: #ff0000">500. Internal server error</h1>
     <hr/>
     <h4>Error message:</h4>
-    <code>{{ ErrMessage }}</code>
+    &nbsp;&nbsp;&nbsp;&nbsp;<code>{{ message }}</code>
+    <hr>
+    <div>Return to <a href="/index">Home</a> or <a href="/login">Login</a></div>
 </head>
 <body>
 

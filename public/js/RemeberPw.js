@@ -1,6 +1,6 @@
-//保存到cookie
+// 保存到 cookie
 function save_cookies() {
-    // console.log('starting!!!!')
+    // console.log('start!!!!')
     if ($("#remember").prop("checked")) {
         var email = $("#email").val()
         var password = $("#password").val()

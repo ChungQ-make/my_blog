@@ -2,7 +2,9 @@ const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
 const session = require('express-session')
-const router = require('./router/router')
+const {UserRouter, TopicRouter} = require('./router/index')
+// 连接数据库
+require('./models/Connect')
 
 const app = express()
 
@@ -25,20 +27,35 @@ app.use(session({
     saveUninitialized: false // 无论你是否使用 Session ，我都默认直接给你分配一把钥匙
 }))
 
-app.use(router)
+
+// 挂载路由
+app.use(UserRouter, TopicRouter)
+
+app.use('/403', function (req, res) {
+    res.status(403).render('403.html')
+})
+
+// err_message 用来保存 500 的错误信息
+let err_message = 'No Erron Message.'
+app.use('/500', function (req, res) {
+    res.status(500).render('500.html', {
+        message: err_message
+    })
+})
 
 app.use((req, res) => {
     res.status(404).render('404.html')
 })
 
 app.use((err, req, res, next) => {
-    res.status(500).json({
-        err_code: 500,
+    err_message = err.message
+    // res.status(500).json({
+    //     err_code: 500,
+    //     message: err.message
+    // })
+    res.status(500).render('500.html', {
         message: err.message
     })
-/*    res.status(500).render('500.html', {
-        ErrMessage: err.message
-    })*/
 })
 
 app.listen(5000, () => {

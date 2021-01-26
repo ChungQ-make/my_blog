@@ -4,29 +4,51 @@
 
 {{block 'body'}}
 <section class="container">
-  <div class="row">
-    <div class="col-md-5">
-      <form>
-        <div class="form-group">
-          <label for="exampleInputEmail1">选择板块</label>
-          <select class="form-control">
-            <option>分享</option>
-            <option>问答</option>
-            <option>招聘</option>
-            <option>客户端测试</option>
-          </select>
+    <div class="row">
+        <div class="col-md-5">
+            <form id="topicForm">
+                <div class="form-group">
+                    <label for="">选择板块</label>
+                    <select class="form-control" name="Topic_type">
+                        <option>分享</option>
+                        <option>问答</option>
+                        <option>招聘</option>
+                        <option>客户端测试</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="">标题</label>
+                    <input class="form-control" placeholder="请输入你的标题" name="titel">
+                </div>
+                <div class="form-group">
+                    <label for="">内容</label>
+                    <textarea class="form-control" rows="3" name="content"
+                              placeholder="请输入话题内容（支持MarkDown语法）" style="height: 300px;"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Submit</button>
+            </form>
         </div>
-        <div class="form-group">
-          <label for="exampleInputEmail1">标题</label>
-          <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email">
-        </div>
-        <div class="form-group">
-          <label for="exampleInputPassword1">内容</label>
-          <textarea class="form-control" rows="3"></textarea>
-        </div>
-        <button type="submit" class="btn btn-default">Submit</button>
-      </form>
     </div>
-  </div>
 </section>
+<script src="/public/js/TopicFormRuler.js"></script>
+<script>
+    $('#topicForm').on('success.form.bv', function (e) {
+        e.preventDefault()
+        var formData = $(this).serialize()
+        $.ajax({
+            url: '/topics/new',
+            type: 'post',
+            data: formData,
+            dataType: 'json',
+            success: function (res) {
+                if (res.err_code !== 200) {
+                    window.alert('发布失败！请重试')
+                } else {
+                    window.alert('话题发布成功！')
+                    window.location.href = '/'
+                }
+            }
+        })
+    })
+</script>
 {{/block}}

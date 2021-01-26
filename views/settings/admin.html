@@ -10,18 +10,18 @@
             <h2>修改密码</h2>
         </div>
         <hr>
-        <form>
+        <form id="editPwFrom">
             <div class="form-group">
                 <label for="exampleInputPassword1">当前密码</label>
-                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="">
+                <input type="password" class="form-control" name="oldPassword" placeholder="">
             </div>
             <div class="form-group">
-                <label for="exampleInputPassword1">新的密码</label>
-                <input type="password" class="form-control" id="exampleInputPassword2" placeholder="">
+                <label for="exampleInputPassword2">新的密码</label>
+                <input type="password" class="form-control" name="newPassword" placeholder="">
             </div>
             <div class="form-group">
-                <label for="exampleInputPassword1">确认密码</label>
-                <input type="password" class="form-control" id="exampleInputPassword3" placeholder="">
+                <label for="exampleInputPassword3">确认密码</label>
+                <input type="password" class="form-control" name="confirmPassword" placeholder="">
             </div>
             <button type="submit" class="btn btn-success">保存</button>
         </form>
@@ -31,9 +31,53 @@
         </div>
         <div>
             <p>一旦注销，不可找回，请谨慎操作</p>
-            <button class="btn btn-danger">删除</button>
+            <button class="btn btn-danger" id="CancelUser">删除</button>
         </div>
         <hr>
     </div>
 </section>
+
+<!--表单验证-->
+<script src="/public/js/EditPasswordRuler.js"></script>
+<script>
+    $('#editPwFrom').on('success.form.bv', function (e) {
+        // 由于使用了 bootstrapValidator 这里的事件监听 submit 必须改为 success.form.bv，否则会产生两次请求。 参考文档：https://www.cnblogs.com/alexjjj/p/6566126.html
+        e.preventDefault()
+        var formData = $(this).serialize()
+        // console.log(formData)
+        $.ajax({
+            url: '/settings/admin/{{ user_id }}',
+            type: 'put',
+            data: formData + '&_method=put',
+            dataType: 'json',
+            success: function (res) {
+                console.log(res)
+                if (res.err_code === 0) {
+                    window.alert('当前密码输入错误！')
+                } else if (res.err_code === 2) {
+                    window.alert('密码更新成功！请重新登录')
+                    window.location.href = '/login'
+                }
+            }
+        })
+    })
+
+    $('#CancelUser').on('click', function () {
+        if (window.confirm('确认要注销当前账号？')) {
+            $.ajax({
+                url: '/settings/admin/{{ user_id }}',
+                type: 'delete',
+                success: function (res) {
+                    console.log(res)
+                    if (res.err_code === 500)
+                        window.alert('注销失败！请重试~')
+                    else if (res.err_code === 200)
+                        window.alert('注销成功！即将返回首页')
+                    window.location.href = '/'
+                }
+            })
+        }
+
+    })
+</script>
 {{/block}}

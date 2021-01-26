@@ -3,11 +3,10 @@
 * */
 
 const mongoose = require('mongoose')
-mongoose.connect('mongodb://localhost/blog_data',{ useNewUrlParser: true ,useUnifiedTopology: true ,useFindAndModify: false} )
+// mongoose.connect('mongodb://localhost/blog_data',{ useNewUrlParser: true ,useUnifiedTopology: true ,useFindAndModify: false} )
+const Schema = mongoose.Schema
 
-const Scheme = mongoose.Schema
-
-const userSchema = new Scheme({
+const userSchema = new Schema({
     email: {
         type: String,
         required: true

@@ -1,9 +1,16 @@
-// 负责处理用户登陆、注册、信息密码修改
+// 负责处理用户登陆、注册、信息密码修改的业务模块
 const md5 = require('blueimp-md5')
 const User = require('../models/user')
 const moment = require('moment')
 
-function login(req, res, next) {
+async function login(req, res, next) {
+
+    if (!await User.findOne({email: req.body.email}))
+        return res.status(200).json({
+            err_code: 2,
+            message: 'The account number is not registered'
+        })
+
     const body = req.body
     User.findOne({
         email: body.email,
@@ -68,27 +75,23 @@ async function register(req, res, next) {
     }
 }
 
-async function editUserInfo(req, res, next) {
+function editUserInfo(req, res, next) {
     const _id = req.params.id
     const editData = req.body
-    try {
-        User.findByIdAndUpdate(_id, editData, (err) => {
-            if (err)
-                return next(err)
-            res.status(200).json({
-                err_code: 0,
-                message: '修改成功！'
-            })
-
+    User.findByIdAndUpdate(_id, editData, (err) => {
+        if (err)
+            return next(err)
+        res.status(200).json({
+            err_code: 0,
+            message: '修改成功！'
         })
-        // 不使用await 或者进行异步处理 将会是一个promise对象
-        // console.log(await User.findOne({_id: _id}))
-        // req.session.user = null
-        // req.session.user = await User.findOne({_id: _id})
-        // console.log(req.session.user)
-    } catch (err) {
-        next(err)
-    }
+
+    })
+    // 不使用await 或者进行异步处理 将会是一个promise对象  不需要对session的数据进行再复制 他会自己更新最新数据
+    // console.log(await User.findOne({_id: _id}))
+    // req.session.user = null
+    // req.session.user = await User.findOne({_id: _id})
+    // console.log(req.session.user)
 }
 
 async function getUserInfo(req, res, next) {
@@ -101,10 +104,57 @@ async function getUserInfo(req, res, next) {
     return userInfo
 }
 
+async function editPassword(req, res, next) {
+    const oldPassword = md5(md5(req.body.oldPassword))
+    try {
+        if (!await User.findOne({_id: req.params.id, password: oldPassword}))
+            return res.status(200).json({
+                err_code: 0,
+                message: '当前密码输入错误！'
+            })
+        // console.log('匹配成功！')
+
+        // 这一步由于前面已经做了做了表单密码二次验证,可以不用写
+        // if (req.body.confirmPassword !== req.body.newPassword)
+        //     return res.state(200).json({
+        //         err_code: 1,
+        //         message: '两次密码输入不一致！'
+        //     })
+        const newPassword = md5(md5(req.body.newPassword))
+        User.findByIdAndUpdate(req.params.id, {password: newPassword}, (err) => {
+            if (err)
+                return next(err)
+            res.status(200).json({
+                err_code: 2,
+                message: '密码修改成功！'
+            })
+
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+function CancelUser(req, res, next) {
+    const id = req.params.id
+    User.remove({_id: id}, function (err) {
+        if (err)
+            return next(err)
+        // 清除登陆状态，重定向至首页
+        req.session.user = null
+        res.status(200).json({
+            err_code: 200,
+            message: '注销账号成功！'
+        })
+    })
+}
+
 module.exports = {
     logout: logout,
     register: register,
     login: login,
     editUserInfo: editUserInfo,
-    getUserInfo: getUserInfo
+    getUserInfo: getUserInfo,
+    editPassword: editPassword,
+    CancelUser: CancelUser
 }
