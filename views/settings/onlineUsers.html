@@ -1,0 +1,40 @@
+{{extend '../_layouts/home.html'}}
+
+{{block 'title'}}{{'多人博客 - 首页'}}{{/block}}
+
+{{block 'body'}}
+<section class="container">
+    <div class="panel panel-default" style="width: 50%">
+        <div class="panel-body">
+            {{ if onlineUsers.length }}
+            <h3>当前在线用户数量：{{ onlineUsers.length }}</h3>
+            <table class="table table-striped table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>用户名称</th>
+                    <th>用户主页</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{ each onlineUsers }}
+                <tr>
+                    <td>{{ $index + 1}}</td>
+                    <td>{{ $value }}</td>
+                    <td><a href="/user/index?name={{ $value }}">{{ $value }}的主页</a></td>
+                </tr>
+                {{ /each }}
+                </tbody>
+            </table>
+            {{ else }}
+            <ul class="list-group">
+                <div class="alert alert-warning" role="alert">当前无任何在线用户</div>
+                <!--                <li class="list-group-item">当前无任何在线用户</li>-->
+            </ul>
+            {{ /if }}
+        </div>
+
+    </div>
+</section>
+
+{{/block}}

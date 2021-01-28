@@ -2,7 +2,6 @@ const express = require('express')
 const userRouter = express.Router()
 const UserManage = require('../controller/UserManage')
 
-
 userRouter.get('/login', (req, res) => {
     res.render('login.html')
 })
@@ -24,45 +23,57 @@ userRouter.get('/logout', (req, res) => {
 })
 
 userRouter.get('/settings/profile', async (req, res, next) => {
-    // 路由拦截 并重定向到 登陆页面
-    if (!req.session.user)
-        return res.status(200).redirect('/login')
-    // console.log('routerInfo', (await UserManage.getUserInfo(req, res, next))._id)
-    // 这里的直接使用 user._id 需要进行处理后使用（&#34; user._id &#34;），直接调用session里的id即可
-    res.render('./settings/profile.html', {
-        url: req.url,
-        user: await UserManage.getUserInfo(req, res, next),
-        id: req.session.user._id
-    })
+    UserManage.getUserInfo(req, res, next)
 })
 
 userRouter.put('/settings/profile/:id', (req, res, next) => {
-    if (!req.session.user)
-        return res.status(403).redirect('/403')
     UserManage.editUserInfo(req, res, next)
 })
 
 userRouter.get('/settings/admin', (req, res) => {
-    if (!req.session.user)
-        return res.status(403).redirect('/403')
-    res.render('./settings/admin.html', {
-        url: req.url,
-        user_id: req.session.user._id
-    })
+
+    UserManage.getAdminPage(req, res)
 })
 
 userRouter.put('/settings/admin/:id', (req, res, next) => {
-    if (!req.session.user)
-        return res.status(403).redirect('/403')
     UserManage.editPassword(req, res, next)
 })
 
 
 userRouter.delete('/settings/admin/:id', (req, res, next) => {
-    if (!req.session.user)
-        return res.status(403).redirect('/403')
-    // console.log(req.params.id)
     UserManage.CancelUser(req, res, next)
+})
+
+
+userRouter.get('/settings/myTopics', (req, res, next) => {
+    UserManage.getUserTopics(req, res, next)
+})
+
+
+userRouter.delete('/settings/myTopics/delete/:id', (req, res, next) => {
+    UserManage.deleteTopics(req, res, next)
+})
+
+userRouter.get('/settings/myTopics/edit', (req, res, next) => {
+    UserManage.editTopicsInfo(req, res, next)
+})
+
+userRouter.put('/settings/myTopics/edit?/:id', (req, res, next) => {
+    UserManage.editTopics(req, res, next)
+})
+
+userRouter.get('/settings/myCollections', (req, res) => {
+    UserManage.getMyCollections(req, res)
+})
+
+
+userRouter.get('/onlineUsers', (req, res, next) => {
+    UserManage.getOnlineUsers(req, res, next)
+})
+
+
+userRouter.get('/User/index', (req, res, next) => {
+    UserManage.getUserHomepage(req, res, next)
 })
 
 

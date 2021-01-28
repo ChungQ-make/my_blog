@@ -31,9 +31,10 @@
                   </ul>
                 </li>
               </ul> -->
-            <form class="navbar-form navbar-left">
+            <form class="navbar-form navbar-left" id="formSearch">
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search">
+                    <input type="text" class="form-control" placeholder="Search" id="searchValue" name="value">
+                    <button class="btn btn-default" type="submit">查询</button>
                 </div>
             </form>
             <ul class="nav navbar-nav navbar-right">
@@ -48,7 +49,7 @@
                             当前登录用户: {{ user.nickname }}
                         </li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="#">个人主页</a></li>
+                        <li><a href="/User/index?id={{ user._id }}">个人主页</a></li>
                         <li><a href="/settings/profile">设置</a></li>
                         <li><a href="/logout">退出</a></li>
                     </ul>
@@ -57,9 +58,44 @@
                 <a class="btn btn-primary navbar-btn" href="/login">登录</a>
                 <a class="btn btn-success navbar-btn" href="/register">注册</a>
                 {{ /if }}
+
+                <!-- Single button -->
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                        在线人数 {{ userOnline }} <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="/onlineUsers">查看在线用户</a></li>
+                        <li><a href="#">资源下载</a></li>
+                        <li><a href="#">管理员主页</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">论坛反馈</a></li>
+                    </ul>
+                </div>
+                <!--                <span class="label label-warning">在线人数：{{ userOnline }}</span>-->
             </ul>
         </div>
         <!-- /.navbar-collapse -->
     </div>
     <!-- /.container-fluid -->
 </nav>
+
+<script type="text/javascript">
+    $('#formSearch').on('submit', function (e) {
+        e.preventDefault()
+        // 进行数据处理去除所有空格，使用MongoDB的模糊查询，而不是直接取出所有数据进行筛选查询
+        // 这里后端返回的是渲染好的html数据，所以数据类型设置为 html ，获取后直接替换body的内容即可
+        // 这里记得在 header.html 里面设置 依赖项模板渲染判断，否者在body里面引入会产生警告错误
+        var formData = $(this).serialize()
+        $.ajax({
+            type: 'get',
+            url: '/index',
+            data: formData,
+            dataType: 'html',
+            success: function (res) {
+                $('body').html(res)
+            }
+        })
+    })
+</script>

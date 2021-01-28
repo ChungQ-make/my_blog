@@ -2,8 +2,13 @@
 const Topic = require('../models/topic')
 const moment = require('moment')
 const marked = require('marked')
+// 拿到 UserManage 的 userOnline 在线人数数据
+const UserManage = require('../controller/UserManage')
 
 function SaveTopicInfo(req, res, next) {
+    // 路由拦截 并重定向到 登陆页面
+    if (!req.session.user)
+        return res.status(200).redirect('/login')
     let topicData = req.body
     topicData.auther = req.session.user.nickname
     topicData.avatar = req.session.user.avatar
@@ -20,8 +25,25 @@ function SaveTopicInfo(req, res, next) {
 }
 
 function getIndexInfo(req, res, next) {
-//   主页渲染这里只需要拿到avatar,title, created_date,commentNum，concerns，pageviews 即可
-    Topic.find({}, {
+    let SearchText = req.query.value
+    // 主页默认请求时，处理 SearchText
+    if (req.query.value === undefined) {
+        SearchText = ''
+    }
+    // 进行数据处理，去除所有空格
+    SearchText = SearchText.replace(/\s/ig, '')
+
+    // 为了提高查询效率，可以同时查询话题标题、内容、类型、作者名，再结合正则表达式
+    const reg = new RegExp(SearchText, "gi")
+    //主页渲染这里只需要拿到avatar, title, created_date, commentNum, concerns, pageviews 即可
+    Topic.find({
+        $or: [
+            {titel: reg},
+            {content: reg},
+            {Topic_type: reg},
+            {auther: reg}
+        ]
+    }, {
         avatar: 1,
         titel: 1,
         created_time: 1,
@@ -39,8 +61,11 @@ function getIndexInfo(req, res, next) {
         // 数组顺序颠倒，新数据在第一行显示
         data.reverse()
         res.status(200).render('index.html', {
+            userOnline: UserManage.userOnline.size,
             user: req.session.user,
-            topicsInfo: data
+            topicsInfo: data,
+            // 将 SearchText 作为依赖项引入（其他重复数据）的判断，避免重复引入
+            SearchText: SearchText
         })
     })
 }
@@ -59,6 +84,8 @@ function getTopicInfo(req, res, next) {
         })
     })
 }
+
+
 
 module.exports = {
     SaveTopicInfo: SaveTopicInfo,

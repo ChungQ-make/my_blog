@@ -1,0 +1,93 @@
+{{extend '../_layouts/home.html'}}
+
+{{block 'title'}}{{'多人博客 - 首页'}}{{/block}}
+
+{{block 'body'}}
+<section class="container">
+    {{include '../_partials/settings-nav.html'}}
+    <div class="col-md-5">
+        <div class="subhead">
+            <h2>话题管理</h2>
+        </div>
+        <hr>
+        <div class="panel panel-default" style="width: 1015px ">
+            <div class="panel-body">
+                {{ if topics.length }}
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>话题标题</th>
+                        <th>话题类型</th>
+                        <th>评论数</th>
+                        <th>关注数</th>
+                        <th>浏览量</th>
+                        <th>创建时间</th>
+                        <th>更新时间</th>
+                        <th>操 作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{ each topics }}
+                    <tr>
+                        <td>{{ $index + 1}}</td>
+                        <td><a href="/topics/info?id={{ $value.id }}">{{ $value.titel }}</a></td>
+                        <td>{{ $value.Topic_type }}</td>
+                        <td>{{ $value.commentNum }}</td>
+                        <td>{{ $value.concerns }}</td>
+                        <td>{{ $value.pageviews }}</td>
+                        <td>{{ $value._created_time }}</td>
+                        <td>{{ $value._last_modified_time }}</td>
+                        <td>
+                            <a class="btn btn-warning btn-sm" href="/settings/myTopics/edit?id={{ $value.id }}">编辑</a> |
+                            <a class="btn btn-danger btn-sm delete" href="/settings/myTopics/delete/{{ $value.id }}"
+                               onclick="return false;">删除</a>
+                        </td>
+                    </tr>
+                    {{ /each }}
+                    </tbody>
+                </table>
+                {{ else }}
+                <div class="panel-body">你还没有发布一条话题哦，点击右边创建你的第一个话题。>>
+                    <span><a type="button" class="btn btn-link" href="/topics/new">创建话题</a></span>
+                </div>
+                {{ /if }}
+            </div>
+        </div>
+
+        <div class="subhead">
+            <h2>创建话题</h2>
+            <hr>
+        </div>
+        <div>
+            <p>点击下面按钮，创建新的话题</p>
+            <div><a type="button" class="btn btn-success" href="/topics/new">创建话题</a></div>
+
+        </div>
+        <hr>
+    </div>
+</section>
+<script>
+    // 这里本来打算直接使用get方法提交删除请求，href="/settings/myTopics/delete?id=..."
+    // 但是用户体验不好，所以可以直接取消a标签的默认行为后,发送delete方式的请求
+    $('.delete').on('click', function () {
+        if (window.confirm('确认要删除该话题吗？')) {
+            // console.log($(this).attr('href'))
+            const url = $(this).attr('href')
+            $.ajax({
+                url: url,
+                type: 'delete',
+                success: function (res) {
+                    if (res.err_code !== 200) {
+                        window.alert('删除失败！请重试')
+                    } else {
+                        window.alert('删除话题成功！')
+                        window.location.href = '/settings/myTopics'
+                    }
+                }
+            })
+        }
+    })
+
+</script>
+{{/block}}

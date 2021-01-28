@@ -16,8 +16,8 @@ $(function () {
                         message: '标题不能为空！'
                     },
                     stringLength: {
-                        max: 30,
-                        message: '标题长度不能大于30个字符'
+                        max: 26,
+                        message: '标题长度不能大于26个字符'
                     }
 
                 }

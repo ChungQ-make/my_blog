@@ -1,7 +1,11 @@
 // 负责处理用户登陆、注册、信息密码修改的业务模块
 const md5 = require('blueimp-md5')
 const User = require('../models/user')
+const Topics = require('../models/topic')
 const moment = require('moment')
+
+// 创建一个Set 类型，用来保存在线用户记录
+let userOnline = new Set([])
 
 async function login(req, res, next) {
 
@@ -24,8 +28,9 @@ async function login(req, res, next) {
                 message: 'Email or Password is invaild.'
             })
 
-        req.session.user = user
+        userOnline.add(user.nickname)
 
+        req.session.user = user
         res.status(200).json({
             err_code: 0,
             message: 'OK'
@@ -35,8 +40,12 @@ async function login(req, res, next) {
 
 function logout(req, res) {
     //    清除session（登陆状态）
+    if (req.session.user.nickname) {
+        userOnline.delete(req.session.user.nickname)
+    }
     req.session.user = null
     res.redirect('/login')
+
 }
 
 async function register(req, res, next) {
@@ -65,6 +74,8 @@ async function register(req, res, next) {
             // 注册成功，使用 Session 记录用户的登陆状态
             req.session.user = user
 
+            userOnline.add(user.nickname)
+
             res.status(200).json({
                 err_code: 0,
                 message: 'OK'
@@ -76,8 +87,14 @@ async function register(req, res, next) {
 }
 
 function editUserInfo(req, res, next) {
+    if (!req.session.user)
+        return res.status(403).redirect('/403')
     const _id = req.params.id
     const editData = req.body
+
+    userOnline.add(req.body.nickname)
+    userOnline.delete(req.session.user.nickname)
+
     User.findByIdAndUpdate(_id, editData, (err) => {
         if (err)
             return next(err)
@@ -94,17 +111,31 @@ function editUserInfo(req, res, next) {
     // console.log(req.session.user)
 }
 
-async function getUserInfo(req, res, next) {
-    let data = await User.findOne({_id: req.session.user._id}, function (err) {
+function getUserInfo(req, res, next) {
+
+    // 路由拦截 并重定向到 登陆页面
+    if (!req.session.user)
+        return res.status(200).redirect('/login')
+
+    User.findOne({_id: req.session.user._id}, function (err, data) {
         if (err)
             return next(err)
+
+        let userInfo = data
+        userInfo._birthday = moment(userInfo.birthday).format("YYYY-MM-DD")
+
+        res.render('./settings/profile.html', {
+            url: req.url,
+            user: userInfo,
+            id: userInfo.id
+        })
     })
-    let userInfo = await data
-    userInfo._birthday = moment(userInfo.birthday).format("YYYY-MM-DD")
-    return userInfo
+
 }
 
 async function editPassword(req, res, next) {
+    if (!req.session.user)
+        return res.status(403).redirect('/403')
     const oldPassword = md5(md5(req.body.oldPassword))
     try {
         if (!await User.findOne({_id: req.params.id, password: oldPassword}))
@@ -136,6 +167,9 @@ async function editPassword(req, res, next) {
 }
 
 function CancelUser(req, res, next) {
+    if (!req.session.user)
+        return res.status(403).redirect('/403')
+    // console.log(req.params.id)
     const id = req.params.id
     User.remove({_id: id}, function (err) {
         if (err)
@@ -149,6 +183,123 @@ function CancelUser(req, res, next) {
     })
 }
 
+function getMyCollections(req, res) {
+    if (!req.session.user)
+        return res.status(200).redirect('/login')
+    res.status(200).render('./settings/myCollections.html', {
+        url: req.url
+    })
+}
+
+function getAdminPage(req, res) {
+    if (!req.session.user)
+        return res.status(200).redirect('/login')
+    res.render('./settings/admin.html', {
+        url: req.url,
+        user_id: req.session.user._id
+    })
+}
+
+function getUserTopics(req, res, next) {
+    if (!req.session.user)
+        return res.status(200).redirect('/login')
+    const id = req.session.user._id
+    Topics.find({userId: id}, function (err, data) {
+        if (err)
+            return next(err)
+        // 处理时间格式
+        data.forEach((value) => {
+            value._created_time = moment(value.created_time).format("YYYY-MM-DD HH:mm:ss")
+            value._last_modified_time = moment(value.last_modified_time).format("YYYY-MM-DD HH:mm:ss")
+        })
+        data.reverse()
+        res.status(200).render('./settings/myTopics.html', {
+            url: req.url,
+            topics: data
+        })
+    })
+
+}
+
+
+function deleteTopics(req, res, next) {
+    if (!req.session.user)
+        return res.status(403).redirect('/403')
+    const id = req.params.id
+    Topics.remove({_id: id}, function (err) {
+        if (err)
+            return next(err)
+        console.log('删除成功！')
+        res.status(200).json({
+            err_code: 200,
+            message: '话题删除成功！'
+        })
+    })
+}
+
+function editTopicsInfo(req, res, next) {
+    if (!req.session.user)
+        return res.status(403).redirect('/403')
+    const id = req.query.id
+    Topics.findOne({_id: id}, function (err, data) {
+        if (err)
+            next(err)
+        res.status(200).render('./topic/edit.html', {
+            topic: data
+        })
+    })
+}
+
+function editTopics(req, res, next) {
+    if (!req.session.user)
+        return res.status(403).redirect('/403')
+    const id = req.params.id
+    const editData = req.body
+    Topics.findByIdAndUpdate(id, editData, function (err) {
+        if (err)
+            next(err)
+        res.status(200).json({
+            err_code: 200,
+            message: '话题信息修改成功！'
+        })
+    })
+}
+
+function getOnlineUsers(req, res) {
+    let Userlist = Array.from(userOnline)
+    res.render('./settings/onlineUsers.html', {
+        onlineUsers: Userlist
+    })
+}
+
+function getUserHomepage(req, res, next) {
+    // const id = req.query.id
+    let obj = {}
+    if (req.query.id) {
+        obj._id = req.query.id
+    } else {
+        obj.nickname = req.query.name
+    }
+    User.findOne(obj, {password: 0}, function (err, data1) {
+        if (err)
+            return next(err)
+        Topics.find({userId: data1.id}, function (err, data2) {
+            if (err)
+                return next(err)
+
+            data2.forEach((value) => {
+                value._created_time = moment(value.created_time).format("YYYY-MM-DD")
+            })
+            
+            res.status(200).render('HomePage.html', {
+                UserInfos: data1,
+                Topics: data2
+            })
+        })
+    })
+    // res.render('HomePage.html')
+}
+
 module.exports = {
     logout: logout,
     register: register,
@@ -156,5 +307,14 @@ module.exports = {
     editUserInfo: editUserInfo,
     getUserInfo: getUserInfo,
     editPassword: editPassword,
-    CancelUser: CancelUser
+    CancelUser: CancelUser,
+    getUserTopics: getUserTopics,
+    getAdminPage: getAdminPage,
+    getMyCollections: getMyCollections,
+    deleteTopics: deleteTopics,
+    editTopicsInfo: editTopicsInfo,
+    editTopics: editTopics,
+    getOnlineUsers: getOnlineUsers,
+    getUserHomepage: getUserHomepage,
+    userOnline: userOnline
 }

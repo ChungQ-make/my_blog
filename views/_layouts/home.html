@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    {{ if !SearchText }}
     <meta charset="UTF-8">
     <title>{{block 'title'}}默认标题{{/block}}</title>
     <script src="/node_modules/jquery/dist/jquery.js"></script>
@@ -16,14 +17,21 @@
     <link rel="stylesheet" href="/node_modules/titatoggle/dist/titatoggle-dist-min.css">
     <link href="https://cdn.bootcdn.net/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css" rel="stylesheet">
     <!--    <link rel="stylesheet" href="/public/css/markdown.min.css">-->
+
+    <!--设置代码高亮-->
+    <!--    <link rel="stylesheet" href="/node_modules/highlight.js/styles/googlecode.css">-->
+    <!--     <link rel="stylesheet" href="/node_modules/highlight.js/styles/school-book.css">-->
+    <link rel="stylesheet" href="/node_modules/highlight.js/styles/gradient-light.css">
+    <script src="/public/js/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    {{ /if }}
     {{block 'head'}}{{/block}}
 </head>
 
 <body>
 {{include '../_partials/header.html'}}
 {{block 'body'}}{{/block}}
-{{include '../_partials/footer.html'}}
-
+<!--{{include '../_partials/footer.html'}}-->
 {{block 'script'}}{{/block}}
 </body>
 
