@@ -7,8 +7,12 @@ TopicRouter.get('/', (req, res) => {
     res.redirect('/index')
 })
 
-TopicRouter.get('/index', (req, res, next) => {
+TopicRouter.get('/index/search', (req, res, next) => {
     TopicManage.getIndexInfo(req, res, next)
+})
+
+TopicRouter.get('/index', (req, res, next) => {
+    TopicManage.indexValuePaging(req, res, next)
 })
 
 TopicRouter.get('/topics/new', (req, res) => {
@@ -25,7 +29,6 @@ TopicRouter.post('/topics/new', (req, res, next) => {
 TopicRouter.get('/topics/info', (req, res, next) => {
     TopicManage.getTopicInfo(req, res, next)
 })
-
 
 
 module.exports = TopicRouter

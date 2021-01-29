@@ -12,7 +12,49 @@
         <hr>
         <div class="panel panel-default" style="width: 700px ">
             <div class="panel-body">
-                该功能暂未开放，请留意下次更新！
+
+                {{ if !collections.length }}
+                抱歉，你没有任何一条收藏记录！ <a href="/" style="text-decoration:none;">前往首页看看？</a>
+                {{ else }}
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>
+                            编号
+                        </th>
+                        <th>
+                            话题
+                        </th>
+                        <th>
+                            类型
+                        </th>
+                        <th>
+                            作者
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{ each collections }}
+                    <tr>
+                        <td>
+                            {{ $index+1 }}
+                        </td>
+                        <td>
+                            <a href="/topics/info?id={{ $value.topicId }}" style="text-decoration:none;">
+                                {{ $value.topicName }}</a>
+                        </td>
+                        <td>
+                            {{ $value.Topic_type }}
+                        </td>
+                        <td>
+                            {{ $value.auther}}
+                        </td>
+                    </tr>
+                    {{ /each }}
+                    </tbody>
+                </table>
+                {{ /if }}
+
             </div>
         </div>
         <hr>

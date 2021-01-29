@@ -54,6 +54,11 @@ const userSchema = new Schema({
         // 2 不可以登录
         enum: [0, 1, 2],
         default: 0
+    },
+    // 新增公告栏区域
+    BulletinBoard:{
+        type: String,
+        default: ''
     }
 })
 

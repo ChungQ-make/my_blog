@@ -2,7 +2,7 @@ const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
 const session = require('express-session')
-const {UserRouter, TopicRouter} = require('./router/index')
+const {UserRouter, TopicRouter, CommentRouter, AttentionRouter} = require('./router/index')
 // 连接数据库
 require('./models/Connect')
 
@@ -29,7 +29,7 @@ app.use(session({
 
 
 // 挂载路由
-app.use(UserRouter, TopicRouter)
+app.use(UserRouter, TopicRouter, CommentRouter, AttentionRouter)
 
 app.use('/403', function (req, res) {
     res.status(403).render('403.html')
@@ -47,7 +47,7 @@ app.use((req, res) => {
     res.status(404).render('404.html')
 })
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
     err_message = err.message
     // res.status(500).json({
     //     err_code: 500,
@@ -59,5 +59,5 @@ app.use((err, req, res, next) => {
 })
 
 app.listen(5000, () => {
-    console.log('runing at http://localhost:5000')
+    console.log('app runing at http://localhost:5000')
 })

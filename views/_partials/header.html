@@ -37,6 +37,7 @@
                     <button class="btn btn-default" type="submit">查询</button>
                 </div>
             </form>
+
             <ul class="nav navbar-nav navbar-right">
                 {{ if user }}
                 <a class="btn btn-default navbar-btn" href="/topics/new">发起</a>
@@ -46,7 +47,7 @@
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li class="dropdown-current-user">
-                            当前登录用户: {{ user.nickname }}
+                            登录用户: {{ user.nickname }}
                         </li>
                         <li role="separator" class="divider"></li>
                         <li><a href="/User/index?id={{ user._id }}">个人主页</a></li>
@@ -73,7 +74,23 @@
                         <li><a href="#">论坛反馈</a></li>
                     </ul>
                 </div>
-                <!--                <span class="label label-warning">在线人数：{{ userOnline }}</span>-->
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                        话题分类 <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="/index/search">最新话题</a></li>
+                        <li><a onclick="myAjax('value=%E5%88%86%E4%BA%AB'); return false;">分享</a></li>
+                        <li><a href="/index/search?value=%E6%8B%9B%E8%81%98"
+                               onclick="myAjax('value=%E6%8B%9B%E8%81%98'); return false;">招聘</a></li>
+                        <li><a href="/index/search?value=%E9%97%AE%E7%AD%94"
+                               onclick="myAjax('value=%E9%97%AE%E7%AD%94'); return false;">问答</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a onclick="myAjax('value=%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B5%8B%E8%AF%95'); return false;">客户端测试</a>
+                        </li>
+                    </ul>
+                </div>
             </ul>
         </div>
         <!-- /.navbar-collapse -->
@@ -88,14 +105,20 @@
         // 这里后端返回的是渲染好的html数据，所以数据类型设置为 html ，获取后直接替换body的内容即可
         // 这里记得在 header.html 里面设置 依赖项模板渲染判断，否者在body里面引入会产生警告错误
         var formData = $(this).serialize()
+        console.log(formData)
+        myAjax(formData)
+    })
+
+    function myAjax(data) {
         $.ajax({
             type: 'get',
-            url: '/index',
-            data: formData,
+            url: '/index/search',
+            data: data,
             dataType: 'html',
             success: function (res) {
                 $('body').html(res)
             }
         })
-    })
+    }
+
 </script>

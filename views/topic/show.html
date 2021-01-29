@@ -17,61 +17,128 @@
         <div class="col-md-9">
             <h1>{{ topic.titel }}</h1>
             <hr>
+            <h4>
+                <a href="/user/index?name={{ topic.auther }}" style="text-decoration:none;">
+                    <span class="label label-primary">作者：{{ topic.auther }}</span>
+                </a>
+                <span class="label label-warning">{{ topic._created_time }}</span>
+            </h4>
+            <hr>
             <!--            <div id="content"></div>-->
             <article class="markdown-body" id="content"><%=#content %>
             </article>
             <hr>
-            <br><br><br><br><br><br>
+            <br><br><br>
+            {{ if user }}
             <div class="checkbox checkbox-slider--b">
                 <label>
-                    <input type="checkbox"><span>关注</span>
+                    {{ if flag === true }}
+                    <input type="checkbox" id="Attention" checked><span>关注</span>
+                    {{ else falg === false }}
+                    <input type="checkbox" id="Attention"><span>关注</span>
+                    {{ /if }}
                 </label>
             </div>
-            <div class="checkbox checkbox-slider--b">
-                <label>
-                    <input type="checkbox"><span>点赞</span>
-                </label>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <span>lipengzhou</span> commented
-                    <span>24 minutes ago</span>
-                    <span class="action">
-            <a href=""><i class="glyphicon glyphicon-thumbs-up pull-right"></i></a>
-            <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
-            <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
-          </span>
-                </div>
-                <div class="panel-body">
-                    评论测试
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <span>lipengzhou</span> commented
-                    <span>24 minutes ago</span>
-                    <span class="action">
-            <a href=""><i class="glyphicon glyphicon-thumbs-up pull-right"></i></a>
-            <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
-            <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
-          </span>
-                </div>
-                <div class="panel-body">
-                    评论测试
-                </div>
-            </div>
+            {{ /if }}
             <hr>
-            <form>
+
+            {{ each comments }}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong>{{ $value.sender }}</strong>
+
+                    {{ if $index === 0 }}
+                    <span class="label label-success">new</span>
+                    {{ /if }}
+
+                    {{ if $value.sender === $value.recipient }}
+                    <span class="label label-warning">me</span>
+                    {{ /if }}
+                    <span class="action">
+                        <span class="label label-default pull-right">{{ $value._created_time }}</span>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    {{ $value.content }}
+                </div>
+            </div>
+            {{ /each }}
+            <hr>
+            <form id="commentForm">
+                {{ if user }}
                 <div class="form-group">
                     <label for="exampleInputPassword1">添加回复</label>
-                    <textarea class="form-control" name="" id="" cols="10" rows="10"></textarea>
+                    <textarea class="form-control" name="content" id="" cols="10" rows="10"
+                              placeholder="请添加你要回复的消息"></textarea>
+                    <input type="text" name="recipient" value="{{ topic.auther }}" hidden>
+                    <input type="text" name="topicName" value="{{ topic.titel }}" hidden>
+                    <input type="text" name="topicId" value="{{ topic.id }}" hidden>
                 </div>
                 <button type="submit" class="btn btn-success">回复</button>
+                {{ else }}
+                <div class="form-group">
+                    <label for="exampleInputPassword1">添加回复</label>
+                    <textarea class="form-control" name="content" cols="10" rows="10"
+                              placeholder="只允许登录用户发表评论，游客请注册登录！"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success" disabled>回复</button>
+                {{ /if }}
             </form>
         </div>
     </div>
 </section>
-<script>
 
+<script>
+    $('#commentForm').on('submit', function (e) {
+        e.preventDefault()
+        var formData = $(this).serialize()
+        var url = '/topics/info?id={{ topic._id }}'
+        url.replace(/&#34;/gi, '')
+        $.ajax({
+            type: 'get',
+            url: '/comment/submit',
+            dataType: 'json',
+            data: formData,
+            success: function (res) {
+                if (res.err_code === 1) {
+                    window.alert('请不要回复空内容！')
+                } else {
+                    window.alert('回复成功！')
+                    window.location.reload()
+                }
+            }
+        })
+    })
+
+    $('#Attention').on('click', function () {
+        // console.log($(this).prop('checked'))
+        var isAttention = $(this).prop('checked')
+        var data = {
+            topicId: '{{ topic.id }}',
+            topicName: '{{ topic.titel }}',
+            userId: '{{ topic.userId }}',
+            auther: '{{ topic.auther }}',
+            Topic_type: '{{ topic.Topic_type }}',
+            falg: isAttention
+        }
+        $.ajax({
+            type: 'get',
+            url: '/attention',
+            data: data,
+            dataType: 'json',
+            success: function (res) {
+                if (res.err_code === 0) {
+                    window.alert('关注成功！')
+                    window.location.reload()
+                } else if (res.err_code === 1) {
+                    window.alert('已取消关注')
+                    window.location.reload()
+                } else if (res.err_code === 2) {
+                    window.alert('已经关注了')
+                    window.location.reload()
+                }
+            }
+        })
+    })
 </script>
 {{/block}}

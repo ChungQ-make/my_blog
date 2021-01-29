@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>{{ UserInfos.nickname }}的主页</title>
+    <link rel="shortcut icon" href="/public/img/favicon_.ico">
     <link href="//cdn.staticfile.org/twitter-bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -24,10 +25,10 @@
         <div class="col-md-12 column">
             <ul class="breadcrumb">
                 <li>
-                    <a href="/">Index</a>
+                    <a href="/">主页</a>
                 </li>
                 <li class="active">
-                    MyBlog
+                    个人主页
                 </li>
             </ul>
             <div class="carousel slide" id="carousel-117473" data-ride="carousel" data-interval="4000">
@@ -78,20 +79,26 @@
                     </div>
                 </div>
                 <a class="left carousel-control" href="#carousel-117473" data-slide="prev"><span
-                        class="glyphicon glyphicon-chevron-left"></span></a> <a class="right carousel-control"
-                                                                                href="#carousel-117473"
-                                                                                data-slide="next"><span
-                    class="glyphicon glyphicon-chevron-right"></span></a>
+                        class="glyphicon glyphicon-chevron-left"></span></a>
+                <a class="right carousel-control" href="#carousel-117473" data-slide="next"><span
+                        class="glyphicon glyphicon-chevron-right"></span></a>
             </div>
-            <br>
+            <hr>
             <div class="row clearfix">
                 <div class="col-md-6 column">
+                    {{ if UserInfos.gender === 0 }}
+                    <img alt="140x140" src="/public/img/man.png" class="img-thumbnail"
+                         style="width: 120px;height: 120px;"/>
+                    {{ else if UserInfos.gender === 1 }}
+                    <img alt="140x140" src="/public/img/woman.png" class="img-thumbnail"
+                         style="width: 120px;height: 120px;"/>
+                    {{ else }}
                     <img alt="140x140" src="{{ UserInfos.avatar }}" class="img-thumbnail"/>
+                    {{ /if }}
                     <hr>
                     <div class="list-group">
                         <div class="list-group-item active">
                             <dt>姓名</dt>
-
                         </div>
                         <div class="list-group-item">
                             {{ UserInfos.nickname }}
@@ -104,8 +111,10 @@
                             <dt>邮箱</dt>
                         </div>
                         <div class="list-group-item">{{ UserInfos.email }}</div>
-                        <div class="list-group-item">邮箱</div>
-                        <div class="list-group-item">{{ UserInfos.email }}</div>
+                        <div class="list-group-item">
+                            <dt>生日</dt>
+                        </div>
+                        <div class="list-group-item">{{ UserInfos._birthday }}</div>
                     </div>
                     <dl>
                         <hr>
@@ -157,7 +166,7 @@
                                 {{ $value._created_time }}
                             </td>
                             <td>
-                                {{ $value.pageviews }}
+                                {{ $value._pageviews }}
                             </td>
                         </tr>
                         {{ /each }}
@@ -170,17 +179,18 @@
                         </div>
                     </div>
                     {{ /if }}
+                    <hr>
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title">
-                                资源列表
+                                公告栏
                             </h3>
                         </div>
                         <div class="panel-body">
-                            <a href="#">Panel content</a>
+                            {{ UserInfos.BulletinBoard }}
                         </div>
                         <div class="panel-footer">
-                            更新时间：2021-1-28
+                            更新时间：{{ UserInfos._last_modified_time }}
                         </div>
                     </div>
                 </div>

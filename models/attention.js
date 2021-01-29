@@ -1,34 +1,34 @@
-/* 创建 comment 评论的数据模型  */
+/* 创建 attention 关注收藏 的数据模型  */
 
 const mongoose = require('mongoose')
 
 const Schema = mongoose.Schema
 
-const commentSchema = new Schema({
-    sender:{
+const attentionSchema = new Schema({
+    userId: {
         type: String,
         required: true
-    },
-    recipient:{
-        type: String,
-        required: true
-    },
-    content: {
-        type: String,
-        required: true
-    },
-    created_time:{
-        type: Date,
-        default: new Date
     },
     topicId: {
+        type: String,
+        required: true
+    },
+    userName: {
         type: String,
         required: true
     },
     topicName: {
         type: String,
         required: true
+    },
+    auther:{
+        type: String,
+        required: true
+    },
+    Topic_type: {
+        type: String,
+        required: true
     }
 })
 
-module.exports = mongoose.model('Comment', commentSchema)
+module.exports = mongoose.model('Attention', attentionSchema)

@@ -3,6 +3,8 @@ const md5 = require('blueimp-md5')
 const User = require('../models/user')
 const Topics = require('../models/topic')
 const moment = require('moment')
+const Attention =  require('../models/attention')
+
 
 // 创建一个Set 类型，用来保存在线用户记录
 let userOnline = new Set([])
@@ -112,7 +114,6 @@ function editUserInfo(req, res, next) {
 }
 
 function getUserInfo(req, res, next) {
-
     // 路由拦截 并重定向到 登陆页面
     if (!req.session.user)
         return res.status(200).redirect('/login')
@@ -155,6 +156,10 @@ async function editPassword(req, res, next) {
         User.findByIdAndUpdate(req.params.id, {password: newPassword}, (err) => {
             if (err)
                 return next(err)
+
+            userOnline.delete(req.session.user.nickname)
+            req.session.user = null
+
             res.status(200).json({
                 err_code: 2,
                 message: '密码修改成功！'
@@ -171,7 +176,7 @@ function CancelUser(req, res, next) {
         return res.status(403).redirect('/403')
     // console.log(req.params.id)
     const id = req.params.id
-    User.remove({_id: id}, function (err) {
+    User.deleteOne({_id: id}, function (err) {
         if (err)
             return next(err)
         // 清除登陆状态，重定向至首页
@@ -183,11 +188,18 @@ function CancelUser(req, res, next) {
     })
 }
 
-function getMyCollections(req, res) {
+function getMyCollections(req, res,next) {
     if (!req.session.user)
         return res.status(200).redirect('/login')
-    res.status(200).render('./settings/myCollections.html', {
-        url: req.url
+    const userName = req.session.user.nickname
+    Attention.find({userName: userName},function (err,data) {
+        if (err)
+            return next(err)
+
+        res.status(200).render('./settings/myCollections.html', {
+            url: req.url,
+            collections: data
+        })
     })
 }
 
@@ -209,8 +221,9 @@ function getUserTopics(req, res, next) {
             return next(err)
         // 处理时间格式
         data.forEach((value) => {
-            value._created_time = moment(value.created_time).format("YYYY-MM-DD HH:mm:ss")
-            value._last_modified_time = moment(value.last_modified_time).format("YYYY-MM-DD HH:mm:ss")
+            value._created_time = moment(value.created_time).format("YYYY-MM-DD HH:mm")
+            value._last_modified_time = moment(value.last_modified_time).format("YYYY-MM-DD HH:mm")
+            value._pageviews = parseInt(value.pageviews)
         })
         data.reverse()
         res.status(200).render('./settings/myTopics.html', {
@@ -221,15 +234,13 @@ function getUserTopics(req, res, next) {
 
 }
 
-
 function deleteTopics(req, res, next) {
     if (!req.session.user)
         return res.status(403).redirect('/403')
     const id = req.params.id
-    Topics.remove({_id: id}, function (err) {
+    Topics.deleteOne({_id: id}, function (err) {
         if (err)
             return next(err)
-        console.log('删除成功！')
         res.status(200).json({
             err_code: 200,
             message: '话题删除成功！'
@@ -254,7 +265,8 @@ function editTopics(req, res, next) {
     if (!req.session.user)
         return res.status(403).redirect('/403')
     const id = req.params.id
-    const editData = req.body
+    let editData = req.body
+    editData.last_modified_time = new Date()
     Topics.findByIdAndUpdate(id, editData, function (err) {
         if (err)
             next(err)
@@ -276,7 +288,7 @@ function getUserHomepage(req, res, next) {
     // const id = req.query.id
     let obj = {}
     if (req.query.id) {
-        obj._id = req.query.id
+        obj._id = req.query.id.replace(/"/g, '')
     } else {
         obj.nickname = req.query.name
     }
@@ -289,8 +301,10 @@ function getUserHomepage(req, res, next) {
 
             data2.forEach((value) => {
                 value._created_time = moment(value.created_time).format("YYYY-MM-DD")
+                value._pageviews = parseInt(value.pageviews)
             })
-            
+            data1._birthday = moment(data1.birthday).format("YYYY-MM-DD")
+            data1._last_modified_time = moment(data1.last_modified_time).format("YYYY-MM-DD HH:mm")
             res.status(200).render('HomePage.html', {
                 UserInfos: data1,
                 Topics: data2

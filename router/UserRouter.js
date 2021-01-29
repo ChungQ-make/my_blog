@@ -62,8 +62,8 @@ userRouter.put('/settings/myTopics/edit?/:id', (req, res, next) => {
     UserManage.editTopics(req, res, next)
 })
 
-userRouter.get('/settings/myCollections', (req, res) => {
-    UserManage.getMyCollections(req, res)
+userRouter.get('/settings/myCollections', (req, res, next) => {
+    UserManage.getMyCollections(req, res, next)
 })
 
 
@@ -79,7 +79,7 @@ userRouter.get('/User/index', (req, res, next) => {
 
 // 错误处理 500 页面测试路由
 userRouter.get('/err', (req, res, next) => {
-    // throw new Error('服务器未开启，请通知网站管理员！（管理员邮箱：cn.chung@foxmail.com）')
+    // throw new Error('服务器错误，请通知网站管理员！（管理员邮箱：cn.chung@foxmail.com）')
     next(new Error('系统出错啦！！！！！'))
 })
 

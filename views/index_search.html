@@ -50,43 +50,21 @@
         {{ /each }}
     </ul>
     {{ if !SearchText }}
-
     <nav aria-label="Page navigation">
         <ul class="pagination">
             <li>
-                <a href="/index/?pagenum=0" aria-label="Previous">
-                    <span aria-hidden="true">First</span>
+                <a href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
-            <!--            <li class="active"><a href="/index/?pagenum=0">1</a></li>-->
-            <!-- 改用原始语法进行循环遍历 -->
-            <% for(var i = 0; i < pageCounts; i++){ %>
-            {{ if i === pagenum }}
-            <li class="active"><a href="/index/?pagenum=<%= i %>"><%= i+1 %></a></li>
-            {{ else }}
-            <li><a href="/index/?pagenum=<%= i %>"><%= i+1 %></a></li>
-            {{ /if }}
-            <% } %>
+            <li class="active"><a href="#">1</a></li>
             <li>
-                <a href="/index/?pagenum={{ pageCounts-1 }}" aria-label="Next">
-                    <span aria-hidden="true">Last</span>
+                <a href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
                 </a>
-            </li>
-            <li>
-                <span aria-label="Next">
-                    <span aria-hidden="true">Total：{{ total }}</span>
-                </span>
-            </li>
-            <li>
-                <a href="/index/search">
-                    <span aria-hidden="true">New Topic</span>
-                </a>
-
             </li>
         </ul>
-
     </nav>
-
     {{ /if }}
 </section>
 

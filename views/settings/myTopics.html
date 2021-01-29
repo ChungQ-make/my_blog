@@ -10,7 +10,7 @@
             <h2>话题管理</h2>
         </div>
         <hr>
-        <div class="panel panel-default" style="width: 1015px ">
+        <div class="panel panel-default" style="width: 1060px ">
             <div class="panel-body">
                 {{ if topics.length }}
                 <table class="table table-striped table-bordered table-hover">
@@ -35,7 +35,7 @@
                         <td>{{ $value.Topic_type }}</td>
                         <td>{{ $value.commentNum }}</td>
                         <td>{{ $value.concerns }}</td>
-                        <td>{{ $value.pageviews }}</td>
+                        <td>{{ $value._pageviews }}</td>
                         <td>{{ $value._created_time }}</td>
                         <td>{{ $value._last_modified_time }}</td>
                         <td>
