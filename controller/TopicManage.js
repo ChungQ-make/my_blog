@@ -155,6 +155,7 @@ function indexValuePaging(req, res, next) {
                 value._created_time = moment(value.created_time).format("YYYY-MM-DD HH:mm")
                 value._pageviews = parseInt(value.pageviews)
             })
+            data1.reverse()
             // console.log(typeof pageNum)
             res.status(200).render('index.html', {
                 pageCounts: pageCounts,

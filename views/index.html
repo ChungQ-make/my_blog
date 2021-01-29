@@ -3,92 +3,104 @@
 {{block 'title'}}{{'多人博客 - 首页'}}{{/block}}
 
 {{block 'body'}}
-<section class="container">
-    <ul class="media-list">
-        {{ each topicsInfo }}
-        <li class="media">
-            <div class="media-left">
-                <a href="/User/index?id={{ $value.userId }}">
-                    {{ if $value.Topic_type === '分享'}}
-                    <img width="40" height="40" class="media-object" src="/public/img/topicType/Share.png" alt="...">
-                    {{ else if $value.Topic_type === '招聘'}}
-                    <img width="40" height="40" class="media-object" src="/public/img/topicType/Recruitment.png"
-                         alt="...">
-                    {{ else if $value.Topic_type === '问答'}}
-                    <img width="40" height="40" class="media-object" src="/public/img/topicType/Question.jpg" alt="...">
-                    {{ else if $value.Topic_type === '客户端测试'}}
-                    <img width="40" height="40" class="media-object" src="/public/img/topicType/Test.png" alt="...">
-                    {{ else if $value.Topic_type === '资源分享'}}
-                    <img width="40" height="40" class="media-object" src="/public/img/topicType/Resources.png"
-                         alt="...">
-                    {{ /if }}
-                </a>
-            </div>
-            <div class="media-body">
-                <h4 class="media-heading">
-                    {{ if $value.Topic_type === '分享'}}
-                    <span class="label label-primary">分享</span>
-                    {{ else if $value.Topic_type === '招聘'}}
-                    <span class="label label-warning">招聘</span>
-                    {{ else if $value.Topic_type === '问答'}}
-                    <span class="label label-success">问答</span>
-                    {{ else if $value.Topic_type === '客户端测试'}}
-                    <span class="label label-default">客户端测试</span>
-                    {{ else if $value.Topic_type === '资源分享'}}
-                    <span class="label label-info">资源分享</span>
-                    {{ /if }}
-                    &nbsp;
-                    <a href="/topics/info?id={{ $value._id }}">
-                        {{ $value.titel }}
-                    </a>
-                </h4>
-                <p> {{ $value.auther }} | {{ $value.concerns }} 人关注 | {{ $value.commentNum }} 个评论 | {{ $value._pageviews
-                    }} 次浏览 |
-                    {{ $value._created_time }}</p>
-            </div>
-        </li>
-        {{ /each }}
-    </ul>
-    {{ if !SearchText }}
+<br>
+<br>
 
-    <nav aria-label="Page navigation">
-        <ul class="pagination">
-            <li>
-                <a href="/index/?pagenum=0" aria-label="Previous">
-                    <span aria-hidden="true">First</span>
-                </a>
-            </li>
-            <!--            <li class="active"><a href="/index/?pagenum=0">1</a></li>-->
-            <!-- 改用原始语法进行循环遍历 -->
-            <% for(var i = 0; i < pageCounts; i++){ %>
-            {{ if i === pagenum }}
-            <li class="active"><a href="/index/?pagenum=<%= i %>"><%= i+1 %></a></li>
-            {{ else }}
-            <li><a href="/index/?pagenum=<%= i %>"><%= i+1 %></a></li>
-            {{ /if }}
-            <% } %>
-            <li>
-                <a href="/index/?pagenum={{ pageCounts-1 }}" aria-label="Next">
-                    <span aria-hidden="true">Last</span>
-                </a>
-            </li>
-            <li>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <section class="container">
+            <ul class="media-list">
+                {{ each topicsInfo }}
+                <li class="media">
+                    <div class="media-left">
+                        <a href="/User/index?id={{ $value.userId }}">
+                            {{ if $value.Topic_type === '分享'}}
+                            <img width="40" height="40" class="media-object" src="/public/img/topicType/Share.png"
+                                 alt="...">
+                            {{ else if $value.Topic_type === '招聘'}}
+                            <img width="40" height="40" class="media-object" src="/public/img/topicType/Recruitment.png"
+                                 alt="...">
+                            {{ else if $value.Topic_type === '问答'}}
+                            <img width="40" height="40" class="media-object" src="/public/img/topicType/Question.jpg"
+                                 alt="...">
+                            {{ else if $value.Topic_type === '客户端测试'}}
+                            <img width="40" height="40" class="media-object" src="/public/img/topicType/Test.png"
+                                 alt="...">
+                            {{ else if $value.Topic_type === '资源分享'}}
+                            <img width="40" height="40" class="media-object" src="/public/img/topicType/Resources.png"
+                                 alt="...">
+                            {{ /if }}
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading">
+                            {{ if $value.Topic_type === '分享'}}
+                            <span class="label label-primary">分享</span>
+                            {{ else if $value.Topic_type === '招聘'}}
+                            <span class="label label-warning">招聘</span>
+                            {{ else if $value.Topic_type === '问答'}}
+                            <span class="label label-success">问答</span>
+                            {{ else if $value.Topic_type === '客户端测试'}}
+                            <span class="label label-default">客户端测试</span>
+                            {{ else if $value.Topic_type === '资源分享'}}
+                            <span class="label label-info">资源分享</span>
+                            {{ /if }}
+                            &nbsp;
+                            <a href="/topics/info?id={{ $value._id }}">
+                                {{ $value.titel }}
+                            </a>
+                        </h4>
+                        <p> {{ $value.auther }} | {{ $value.concerns }} 人关注 | {{ $value.commentNum }} 个评论 | {{
+                            $value._pageviews
+                            }} 次浏览 |
+                            {{ $value._created_time }}</p>
+                    </div>
+                </li>
+                {{ /each }}
+            </ul>
+            {{ if !SearchText }}
+
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li>
+                        <a href="/index/?pagenum=0" aria-label="Previous">
+                            <span aria-hidden="true">First</span>
+                        </a>
+                    </li>
+                    <!--            <li class="active"><a href="/index/?pagenum=0">1</a></li>-->
+                    <!-- 改用原始语法进行循环遍历 -->
+                    <% for(var i = 0; i < pageCounts; i++){ %>
+                    {{ if i === pagenum }}
+                    <li class="active"><a href="/index/?pagenum=<%= i %>"><%= i+1 %></a></li>
+                    {{ else }}
+                    <li><a href="/index/?pagenum=<%= i %>"><%= i+1 %></a></li>
+                    {{ /if }}
+                    <% } %>
+                    <li>
+                        <a href="/index/?pagenum={{ pageCounts-1 }}" aria-label="Next">
+                            <span aria-hidden="true">Last</span>
+                        </a>
+                    </li>
+                    <li>
                 <span aria-label="Next">
                     <span aria-hidden="true">Total：{{ total }}</span>
                 </span>
-            </li>
-            <li>
-                <a href="/index/search">
-                    <span aria-hidden="true">New Topic</span>
-                </a>
+                    </li>
+                    <li>
+                        <a href="/index/search">
+                            <span aria-hidden="true">New Topic</span>
+                        </a>
 
-            </li>
-        </ul>
+                    </li>
+                </ul>
 
-    </nav>
+            </nav>
 
-    {{ /if }}
-</section>
+            {{ /if }}
+        </section>
+    </div>
+</div>
+
 
 <script>
 </script>

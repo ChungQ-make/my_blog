@@ -121,9 +121,15 @@
                         <dt>
                             <div class="panel panel-default">
                                 <div class="panel-heading">个人简介</div>
+                                {{ if UserInfos.bio }}
                                 <div class="panel-body">
                                     {{ UserInfos.bio }}
                                 </div>
+                                {{ else }}
+                                <div class="panel-body">
+                                    这个用户太懒了，没有发布任何信息！ ┭┮﹏┭┮
+                                </div>
+                                {{ /if }}
                             </div>
                         </dt>
                     </dl>
@@ -157,7 +163,8 @@
                                 {{ $index + 1 }}
                             </td>
                             <td>
-                                <a href="/topics/info?id={{ $value._id }}">{{ $value.titel }}</a>
+                                <a href="/topics/info?id={{ $value._id }}" style="text-decoration:none;">{{ $value.titel
+                                    }}</a>
                             </td>
                             <td>
                                 {{ $value.Topic_type }}
@@ -186,9 +193,15 @@
                                 公告栏
                             </h3>
                         </div>
+                        {{ if UserInfos.BulletinBoard }}
                         <div class="panel-body">
                             {{ UserInfos.BulletinBoard }}
                         </div>
+                        {{ else }}
+                        <div class="panel-body">
+                            这个用户太懒了，没有发布任何信息！ (〃＞皿＜))
+                        </div>
+                        {{ /if }}
                         <div class="panel-footer">
                             更新时间：{{ UserInfos._last_modified_time }}
                         </div>
