@@ -21,8 +21,8 @@ $(function () {
                         message: '用户名长度必须在6到18位之间'
                     },
                     regexp: {
-                        regexp: /^[a-zA-Z0-9_]+$/,
-                        message: '用户名只能包含大写、小写、数字和下划线'
+                        regexp: /^\S+\w{8,32}\S{1,}/,
+                        message: '用户名不能包含空格和特殊字符'
                     }
                 }
             },
