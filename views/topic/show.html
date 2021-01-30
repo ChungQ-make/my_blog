@@ -45,16 +45,34 @@
             {{ each comments }}
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <strong>{{ $value.sender }}</strong>
-
+                    <strong><a href="/user/index?name={{ $value.sender }}" style="text-decoration:none;">{{
+                        $value.sender }}</a></strong>&nbsp;
                     {{ if $index === 0 }}
                     <span class="label label-success">new</span>
                     {{ /if }}
 
                     {{ if $value.sender === $value.recipient }}
-                    <span class="label label-warning">me</span>
+                    <span class="label label-warning">作者</span>
                     {{ /if }}
+
+                    {{ if $value.sender === user.nickname }}
+                    <span class="label label-info">me</span>
+                    {{ /if }}
+
                     <span class="action">
+                        {{ if user }}
+                        {{ if user.nickname === topic.auther }}
+                       <span class="label pull-right">
+                            <a href="#" onclick="removeComment('{{ $value.id }}');return false;"><i
+                                    class="glyphicon glyphicon-remove-circle" style="font-size: 14px"></i></a>
+                       </span>
+                        {{ else if $value.sender === user.nickname}}
+                       <span class="label pull-right">
+                            <a href="#" onclick="removeComment('{{ $value.id }}');return false;"><i
+                                    class="glyphicon glyphicon-remove-circle" style="font-size: 14px"></i></a>
+                       </span>
+                        {{ /if }}
+                        {{ /if }}
                         <span class="label label-default pull-right">{{ $value._created_time }}</span>
                     </span>
                 </div>
@@ -63,6 +81,7 @@
                 </div>
             </div>
             {{ /each }}
+
             <hr>
             <form id="commentForm">
                 {{ if user }}
@@ -88,57 +107,5 @@
     </div>
 </section>
 
-<script>
-    $('#commentForm').on('submit', function (e) {
-        e.preventDefault()
-        var formData = $(this).serialize()
-        var url = '/topics/info?id={{ topic._id }}'
-        url.replace(/&#34;/gi, '')
-        $.ajax({
-            type: 'get',
-            url: '/comment/submit',
-            dataType: 'json',
-            data: formData,
-            success: function (res) {
-                if (res.err_code === 1) {
-                    window.alert('请不要回复空内容！')
-                } else {
-                    window.alert('回复成功！')
-                    window.location.reload()
-                }
-            }
-        })
-    })
-
-    $('#Attention').on('click', function () {
-        // console.log($(this).prop('checked'))
-        var isAttention = $(this).prop('checked')
-        var data = {
-            topicId: '{{ topic.id }}',
-            topicName: '{{ topic.titel }}',
-            userId: '{{ topic.userId }}',
-            auther: '{{ topic.auther }}',
-            Topic_type: '{{ topic.Topic_type }}',
-            falg: isAttention
-        }
-        $.ajax({
-            type: 'get',
-            url: '/attention',
-            data: data,
-            dataType: 'json',
-            success: function (res) {
-                if (res.err_code === 0) {
-                    window.alert('关注成功！')
-                    window.location.reload()
-                } else if (res.err_code === 1) {
-                    window.alert('已取消关注')
-                    window.location.reload()
-                } else if (res.err_code === 2) {
-                    window.alert('已经关注了')
-                    window.location.reload()
-                }
-            }
-        })
-    })
-</script>
+<script type="text/javascript" src="/public/js/showView/showViewAjax.js"></script>
 {{/block}}

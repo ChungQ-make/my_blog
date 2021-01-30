@@ -31,7 +31,8 @@
                     {{ each topics }}
                     <tr>
                         <td>{{ $index + 1}}</td>
-                        <td><a href="/topics/info?id={{ $value.id }}">{{ $value.titel }}</a></td>
+                        <td><a href="/topics/info?id={{ $value.id }}" style="text-decoration:none;">{{ $value.titel
+                            }}</a></td>
                         <td>{{ $value.Topic_type }}</td>
                         <td>{{ $value.commentNum }}</td>
                         <td>{{ $value.concerns }}</td>
@@ -82,7 +83,7 @@
                         window.alert('删除失败！请重试')
                     } else {
                         window.alert('删除话题成功！')
-                        window.location.href = '/settings/myTopics'
+                        window.location.reload()
                     }
                 }
             })

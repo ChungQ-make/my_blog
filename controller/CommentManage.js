@@ -4,7 +4,6 @@ const Topic = require('../models/topic')
 
 
 function sendComment(req, res, next) {
-
     if (!req.session.user)
         return res.status(403).redirect('/403')
 
@@ -38,6 +37,23 @@ function sendComment(req, res, next) {
 
 }
 
+
+function removeComment(req, res, next) {
+    if (!req.session.user)
+        return res.status(403).redirect('/403')
+    const id = req.params.id
+    Comment.deleteOne({_id: id}, function (err) {
+        if (err)
+            return next(err)
+
+        res.status(200).json({
+            err_code: 200,
+            message: `删除评论成功!`
+        })
+    })
+}
+
 module.exports = {
-    sendComment: sendComment
+    sendComment: sendComment,
+    removeComment: removeComment
 }

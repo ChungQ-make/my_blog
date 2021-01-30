@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="/public/img/favicon_.ico">
+    <title>论坛反馈</title>
+
+    <link href="//cdn.staticfile.org/twitter-bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="//apps.bdimg.com/libs/html5shiv/3.7/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="//cdn.staticfile.org/jquery/2.0.0/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdn.staticfile.org/jqueryui/1.10.2/jquery-ui.min.js"></script>
+    <script type="text/javascript"
+            src="//cdn.staticfile.org/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js"></script>
+    <script type="text/javascript" src="//cdn.staticfile.org/twitter-bootstrap/3.0.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/" style="text-decoration: none">主页</a>
+                </li>
+                <li class="active">
+                    论坛反馈
+                </li>
+            </ul>
+            <h2>
+                论坛反馈
+            </h2>
+            <hr>
+            <dl>
+                <dt>
+                    管理员QQ
+                </dt>
+                <dd>
+                    2442759092
+                <dt>
+                    管理员邮箱
+                </dt>
+                <dd>
+                    cn.chung@foxmail.com
+                </dd>
+                <dt>
+                    注意事项
+                </dt>
+                <dd>
+                    本论坛只供学习交流，请勿发布任何违法内容！
+                </dd>
+                <dd>
+                    论坛反馈可以通过下面进行反馈，或者直接联系管理员QQ或者邮箱。
+                </dd>
+            </dl>
+            <hr>
+            {{ if feedbacks.length }}
+            {{ each feedbacks }}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong>反馈【{{ $index+1 }}】</strong>&nbsp;
+                    {{ if $index === 0 }}
+                    <span class="label label-success">new</span>
+                    {{ /if }}
+                    <span class="action">
+                            <span class="label label-default pull-right">{{ $value._created_time }}</span>
+                        </span>
+                </div>
+                <div class="panel-body">
+                    {{ $value.content }}
+                </div>
+            </div>
+            {{ /each }}
+            {{ else }}
+            <div class="alert alert-warning" role="alert">
+                <span class="glyphicon glyphicon-info-sign"></span>&nbsp;
+                当前无任何反馈，你可以通过下面操作提交你的反馈。
+            </div>
+            {{ /if }}
+            <hr>
+
+            <div class="row clearfix">
+                <div class="col-md-12 column">
+                    <form id="feedback">
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">添加反馈</label>
+                            <textarea class="form-control" name="content" id="" cols="10" rows="10"
+                                      placeholder="请添加你要反馈的信息"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">回复</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#feedback').on('submit', function (e) {
+        e.preventDefault()
+        var formData = $(this).serialize()
+        if (window.confirm('确认提交你的反馈？')) {
+            $.ajax({
+                type: 'get',
+                url: '/Feedback/send',
+                data: formData,
+                dataType: 'json',
+                success: function (res) {
+                    if (res.err_code !== 200) {
+                        window.alert('提交失败！请重试')
+                    } else {
+                        window.alert('提交成功！')
+                        window.location.reload()
+                    }
+                }
+            })
+        }
+    })
+</script>
+</body>
+</html>

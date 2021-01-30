@@ -2,7 +2,7 @@ const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
 const session = require('express-session')
-const {UserRouter, TopicRouter, CommentRouter, AttentionRouter} = require('./router/index')
+const {UserRouter, TopicRouter, CommentRouter, AttentionRouter,FeedbackRouter} = require('./router/index')
 // 连接数据库
 require('./models/Connect')
 
@@ -29,7 +29,7 @@ app.use(session({
 
 
 // 挂载路由
-app.use(UserRouter, TopicRouter, CommentRouter, AttentionRouter)
+app.use(UserRouter, TopicRouter, CommentRouter, AttentionRouter,FeedbackRouter)
 
 app.use('/403', function (req, res) {
     res.status(403).render('403.html')
@@ -46,6 +46,7 @@ app.use('/500', function (req, res) {
 app.use((req, res) => {
     res.status(404).render('404.html')
 })
+
 
 app.use((err, req, res) => {
     err_message = err.message

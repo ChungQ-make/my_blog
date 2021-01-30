@@ -104,7 +104,8 @@ function getTopicInfo(req, res, next) {
                                 content: html,
                                 user: req.session.user,
                                 comments: data1,
-                                flag: true
+                                flag: true,
+
                             })
                         } else {
                             res.status(200).render('./topic/show.html', {
@@ -112,7 +113,8 @@ function getTopicInfo(req, res, next) {
                                 content: html,
                                 user: req.session.user,
                                 comments: data1,
-                                flag: false
+                                flag: false,
+                                user: req.session.user
                             })
                         }
                     })
@@ -121,7 +123,8 @@ function getTopicInfo(req, res, next) {
                         topic: data,
                         content: html,
                         user: req.session.user,
-                        comments: data1
+                        comments: data1,
+                        user: ''
                     })
                 }
             })
@@ -155,7 +158,7 @@ function indexValuePaging(req, res, next) {
                 value._created_time = moment(value.created_time).format("YYYY-MM-DD HH:mm")
                 value._pageviews = parseInt(value.pageviews)
             })
-            data1.reverse()
+            // data1.reverse()
             // console.log(typeof pageNum)
             res.status(200).render('index.html', {
                 pageCounts: pageCounts,
@@ -166,7 +169,6 @@ function indexValuePaging(req, res, next) {
                 pagenum: parseInt(pageNum)
             })
         }).limit(pageSize).skip(skip)
-
     })
 }
 
