@@ -2,11 +2,25 @@ const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
 const session = require('express-session')
-const {UserRouter, TopicRouter, CommentRouter, AttentionRouter,FeedbackRouter} = require('./router/index')
+const {UserRouter, TopicRouter, CommentRouter, AttentionRouter, FeedbackRouter} = require('./router/index')
+// 开启 https 服务 和 Gzip 服务
+const fs = require('fs')
+const https = require('https')
+const compression = require('compression')
+
+const options = {
+    cert: fs.readFileSync(path.join(__dirname, './IIS/1_www.yycloud.ltd_bundle.crt')),
+    key: fs.readFileSync(path.join(__dirname, './IIS/2_www.yycloud.ltd.key'))
+}
+
+
 // 连接数据库
 require('./models/Connect')
 
 const app = express()
+
+// 挂载 gzip 中间件
+app.use(compression())
 
 app.use('/public/', express.static(path.join(__dirname, './public/')))
 app.use('/node_modules/', express.static(path.join(__dirname, './node_modules/')))
@@ -29,7 +43,7 @@ app.use(session({
 
 
 // 挂载路由
-app.use(UserRouter, TopicRouter, CommentRouter, AttentionRouter,FeedbackRouter)
+app.use(UserRouter, TopicRouter, CommentRouter, AttentionRouter, FeedbackRouter)
 
 app.use('/403', function (req, res) {
     res.status(403).render('403.html')
@@ -60,6 +74,14 @@ app.use((err, req, res) => {
 })
 
 
+/*
 app.listen(5000, () => {
     console.log('app runing at http://localhost:5000')
+})
+*/
+
+
+//  启动https服务
+https.createServer(options, app).listen(443, function () {
+    console.log('Https Service has been started, runing at https://localhost')
 })
