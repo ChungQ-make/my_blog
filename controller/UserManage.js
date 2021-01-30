@@ -3,7 +3,7 @@ const md5 = require('blueimp-md5')
 const User = require('../models/user')
 const Topics = require('../models/topic')
 const moment = require('moment')
-const Attention =  require('../models/attention')
+const Attention = require('../models/attention')
 
 
 // 创建一个Set 类型，用来保存在线用户记录
@@ -188,14 +188,13 @@ function CancelUser(req, res, next) {
     })
 }
 
-function getMyCollections(req, res,next) {
+function getMyCollections(req, res, next) {
     if (!req.session.user)
         return res.status(200).redirect('/login')
     const userName = req.session.user.nickname
-    Attention.find({userName: userName},function (err,data) {
+    Attention.find({userName: userName}, function (err, data) {
         if (err)
             return next(err)
-
         res.status(200).render('./settings/myCollections.html', {
             url: req.url,
             collections: data
