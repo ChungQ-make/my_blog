@@ -28,7 +28,24 @@ function sendFeedbacks(req, res, next) {
     })
 }
 
+function uploadUserImg(req, res) {
+    const files = req.files
+    if (!files[0])
+        return res.json({
+            err_code: 1,
+            message: '文件上传失败！'
+        })
+    res.json({
+        err_code: 0,
+        data: {
+            url: files[0].path
+        },
+        message: '文件上传成功！'
+    })
+}
+
 module.exports = {
     sendFeedbacks: sendFeedbacks,
-    getFeedbacks: getFeedbacks
+    getFeedbacks: getFeedbacks,
+    uploadUserImg: uploadUserImg
 }

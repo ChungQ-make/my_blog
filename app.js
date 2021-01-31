@@ -2,22 +2,24 @@ const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
 const session = require('express-session')
+const cors = require('cors')
 const {UserRouter, TopicRouter, CommentRouter, AttentionRouter, FeedbackRouter} = require('./router/index')
 // 开启 https 服务 和 Gzip 服务
 const fs = require('fs')
 const https = require('https')
 const compression = require('compression')
-
 const options = {
     cert: fs.readFileSync(path.join(__dirname, './IIS/1_www.yycloud.ltd_bundle.crt')),
     key: fs.readFileSync(path.join(__dirname, './IIS/2_www.yycloud.ltd.key'))
 }
-
-
 // 连接数据库
 require('./models/Connect')
 
+
 const app = express()
+
+// 使用cors插件解决跨域问题也可以使用手动方式
+app.use(cors())
 
 // 挂载 gzip 中间件
 app.use(compression())
@@ -74,14 +76,15 @@ app.use((err, req, res) => {
 })
 
 
+// 本测试端口服务
 /*
 app.listen(5000, () => {
     console.log('app runing at http://localhost:5000')
 })
 */
 
-
+//  线上 https 或者 http 端口服务
 //  启动https服务
 https.createServer(options, app).listen(443, function () {
-    console.log('Https Service has been started, runing at https://localhost')
+    console.log('Https Service has been started, runing at https://localhost/')
 })

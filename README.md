@@ -1,15 +1,23 @@
 ## 基于node的一个blog论坛项目
 
-  #### 技术栈（插件）：    
-       "art-template": "^4.13.2",
-       "blueimp-md5": "^2.18.0",
-       "body-parser": "^1.19.0",
-       "bootstrap": "^3.3.7",
-       "express": "^4.17.1",
-       "express-art-template": "^1.0.1",
-       "express-session": "^1.17.1",
-       "jquery": "^3.5.1",
-       "mongoose": "^5.11.12"  
+  #### 依赖项（插件）：    
+          "art-template": "^4.13.2",
+          "blueimp-md5": "^2.18.0",
+          "body-parser": "^1.19.0",
+          "bootstrap": "^3.3.7",
+          "bootstrapvalidator": "^0.5.4",
+          "compression": "^1.7.4",
+          "express": "^4.17.1",
+          "express-art-template": "^1.0.1",
+          "express-session": "^1.17.1",
+          "highlight.js": "^10.5.0",
+          "jquery": "^3.5.1",
+          "jquery-base64": "^1.0.0",
+          "jquery.cookie": "^1.4.1",
+          "marked": "^1.2.7",
+          "moment": "^2.29.1",
+          "mongoose": "^5.11.12",
+          "titatoggle": "^2.1.2"  
   #### 启动项  
   ~~~
         node app.js 
